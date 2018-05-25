@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phonebook</title>
+    <link rel="icon" type="image/png" href="http://o90007de.beget.tech/favicon.png" sizes="32x32">
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+	<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/contactList.css">
+
+  </head>
+<body>
+
+    <div class="container" id="program" >
+       <h1>Component1</h1>
+
+    </div>
+    <script type="text/babel">
+
+
+
+
+class Task extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      edit: false,
+    };
+  };
+  edit = () => {
+    this.setState ({edit: true});
+  };
+  remove = () => {
+    this.props.deleteBlock(this.props.index) ;
+
+  };
+  save = () => {
+    var value = this.refs.newTxt.value;
+    this.props.update(value,this.props.index);
+    this.setState ({edit: false})
+  };
+  rendNorm = () => {
+    return (      <div className="box">
+        <div className="numberOf">#{this.props.index+1}</div>
+        <div className="text" onClick={this.edit}>{this.props.children}</div>
+        <div className="buttons">
+          <button onClick={this.edit} className="btn light">Редактировать</button>
+          <button onClick={this.remove} className="btn red">Удалить</button>
+        </div>
+      </div>
+    );
+  };
+  rendEdit = () => {
+    return (
+      <div className="box">
+       <div className="numberOf">#{this.props.index+1}</div>
+        <textarea ref="newTxt" defaultValue={this.props.children}></textarea>
+        <button onClick={this.save} className="btn success">Сохранить</button>
+      </div>
+    );
+  };
+  render() {
+    if (this.state.edit) {
+      return this.rendEdit ();
+    } else {
+      return this.rendNorm ();
+    }
+  }
+}
+
+
+
+
+
+
+
+class TaskGrid extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: [ ]
+    };
+  };
+  deleteBlock = (index) => {
+    var arr = this.state.tasks;
+    arr.splice (index, 1);
+    this.setState ({tasks: arr});
+  };
+  updateText = (text, index) => {
+    var arr = this.state.tasks;
+    arr[index] = text;
+    this.setState ({tasks: arr});
+  };
+  addNote = (text) => {
+    var arr = this.state.tasks;
+    arr.push(text);
+    this.setState ({tasks: arr});
+
+  };
+
+  render() {
+    return (<div className="field">
+              <button onClick={this.addNote.bind(null,"Новое задание")} className="btn red">
+                Добавить заметку
+              </button>
+              {this.state.tasks.map ((item, index)=>{
+                return (
+                  <Task key={index} index={index} update={this.updateText} deleteBlock={this.deleteBlock} >
+                    {item}
+                  </Task>
+                );
+              })}
+            </div>
+    );
+  }
+}
+
+
+
+
+
+ReactDOM.render(
+  <div>
+    <TaskGrid />
+  </div>,
+  document.getElementById("program")
+);
+
+    </script>
+    </div>
+</body>
+</html>
